@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Builder
 @Data
@@ -24,7 +25,7 @@ public class ContaBancariaRequest implements Serializable {
     private Long id;
 
     @NotNull
-    private int amount;
+    private BigDecimal amount;
 
     private Long idDestino;
 

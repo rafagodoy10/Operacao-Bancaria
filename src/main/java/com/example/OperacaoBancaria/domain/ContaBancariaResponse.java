@@ -1,7 +1,9 @@
 package com.example.OperacaoBancaria.domain;
 
 
+import com.example.OperacaoBancaria.repository.ContaBancariaModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +19,10 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContaBancariaResponse implements Serializable {
 
-    private String type;
+    @JsonProperty(value = "origin")
+    private ContaBancariaModel contaBancariaOrigemModel;
 
-    @NotNull
-    private ContaOrigem contaOrigem;
-
-    @NotNull
-    private ContaDestino contaDestino;
+    @JsonProperty(value = "destination")
+    private ContaBancariaModel contaBancariaDestinoModel;
 
 }

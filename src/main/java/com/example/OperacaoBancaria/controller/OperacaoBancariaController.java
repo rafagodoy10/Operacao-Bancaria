@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/operacaoBancaria")
 public class OperacaoBancariaController {
@@ -22,14 +24,13 @@ public class OperacaoBancariaController {
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ContaBancariaResponse event(@RequestBody ContaBancariaRequest contaBancariaRequest) {
-        return operacaoBancariaService.Operacao(contaBancariaRequest);
+            return operacaoBancariaService.Operacao(contaBancariaRequest);
     }
 
-    @RequestMapping(value = "/balance/{account_id}")
-    public String getByAccountId(@PathVariable Long accountId) {
+    @RequestMapping(value = "/balance")
+    public BigDecimal getByAccountId(@RequestParam("account_id") Long accountId) {
         return operacaoBancariaService.getByAccountId(accountId);
     }
-
 }
