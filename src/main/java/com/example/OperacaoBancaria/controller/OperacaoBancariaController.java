@@ -23,7 +23,7 @@ public class OperacaoBancariaController {
         operacaoBancariaService.reset();
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/event", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ContaBancariaResponse event(@RequestBody ContaBancariaRequest contaBancariaRequest) {
             return operacaoBancariaService.Operacao(contaBancariaRequest);

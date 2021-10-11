@@ -4,9 +4,7 @@ import com.example.OperacaoBancaria.domain.ContaBancariaResponse;
 import com.example.OperacaoBancaria.repository.ContaBancariaModel;
 import com.example.OperacaoBancaria.domain.ContaBancariaRequest;
 import com.example.OperacaoBancaria.exception.ContaNaoEncontrada;
-import com.example.OperacaoBancaria.repository.ContaBancariaTransferenciaModel;
 import com.example.OperacaoBancaria.repository.OperacaoBancariaRepository;
-import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,23 +29,31 @@ public class OperacaoBancariaService {
         ContaBancariaModel retornoDeposit = null;
         ContaBancariaModel retornoSaque = null;
 
-        switch (contaBancariaRequest.getType()){
-            case  "deposit":
+        switch (contaBancariaRequest.getType()) {
+            case "deposit":
                 retornoDeposit = operacoesServices.criaDeposita(contaBancariaRequest);
+                break;
             case "withdraw":
                 retornoSaque = operacoesServices.saque(contaBancariaRequest);
+                break;
             case "transfer":
-                retornoDeposit = operacoesServices.criaDeposita(contaBancariaRequest);
-                retornoSaque = operacoesServices.saque(contaBancariaRequest);
+                ContaBancariaModel retornoConta = operacoesServices.buscaConta(contaBancariaRequest.getIdOrigin());
+                if (Objects.nonNull(retornoConta)) {
+                    retornoDeposit = operacoesServices.criaDeposita(contaBancariaRequest);
+                    retornoSaque = operacoesServices.saque(contaBancariaRequest);
+                    break;
+                } else {
+                    throw new ContaNaoEncontrada("Operação bancaria inválida");
+                }
         }
-        return ContaBancariaResponse.builder().contaBancariaOrigemModel(retornoDeposit)
-                .contaBancariaDestinoModel(retornoSaque)
+        return ContaBancariaResponse.builder().contaBancariaOrigemModel(retornoSaque)
+                .contaBancariaDestinoModel(retornoDeposit)
                 .build();
     }
 
     public BigDecimal getByAccountId(Long accountId) {
-        var retorno = operacaoBancariaRepository.findOne(accountId);
-        if (Objects.isNull(retorno)){
+        ContaBancariaModel retorno = operacaoBancariaRepository.findById(accountId).orElse(null);
+        if (Objects.isNull(retorno)) {
             throw new ContaNaoEncontrada("Conta não encontrada");
         }
         return retorno.getBalance();

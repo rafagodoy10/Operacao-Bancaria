@@ -4,7 +4,6 @@ import com.example.OperacaoBancaria.domain.ContaBancariaRequest;
 import com.example.OperacaoBancaria.exception.ContaNaoEncontrada;
 import com.example.OperacaoBancaria.exception.ValidationException;
 import com.example.OperacaoBancaria.repository.ContaBancariaModel;
-import com.example.OperacaoBancaria.repository.ContaBancariaTransferenciaModel;
 import com.example.OperacaoBancaria.repository.OperacaoBancariaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,15 +19,14 @@ public class OperacoesServices {
     OperacaoBancariaRepository operacaoBancariaRepository;
 
     public ContaBancariaModel criaDeposita(ContaBancariaRequest contaBancariaRequest) {
-        if (isNull(contaBancariaRequest.getId()) ||
-                isNull(contaBancariaRequest.getAmount())) {
+        if (isNull(contaBancariaRequest.getAmount())) {
             throw new ValidationException();
         }
 
-        ContaBancariaModel retorno = operacaoBancariaRepository.findOne(contaBancariaRequest.getId());
+        ContaBancariaModel retorno = buscaConta(contaBancariaRequest.getIdDestino());
 
         if (Objects.isNull(retorno)) {
-            ContaBancariaModel contaBancariaModel = new ContaBancariaModel(contaBancariaRequest.getId(), contaBancariaRequest.getAmount());
+            ContaBancariaModel contaBancariaModel = new ContaBancariaModel(contaBancariaRequest.getIdDestino(), contaBancariaRequest.getAmount());
             operacaoBancariaRepository.save(contaBancariaModel);
             return contaBancariaModel;
         } else {
@@ -38,14 +36,20 @@ public class OperacoesServices {
         return retorno;
     }
 
+    public ContaBancariaModel buscaConta(Long id) {
+        if(Objects.nonNull(id)) {
+            return operacaoBancariaRepository.findById(id).orElse(null);
+        }
+        return null;
+    }
+
     public ContaBancariaModel saque(ContaBancariaRequest contaBancariaRequest) {
-        if (isNull(contaBancariaRequest.getId()) ||
-                isNull(contaBancariaRequest.getIdDestino()) ||
+        if (isNull(contaBancariaRequest.getIdOrigin()) ||
                 isNull(contaBancariaRequest.getAmount())) {
             throw new ValidationException();
         }
 
-        ContaBancariaModel retorno = operacaoBancariaRepository.findOne(contaBancariaRequest.getId());
+        ContaBancariaModel retorno = buscaConta(contaBancariaRequest.getIdOrigin());
 
         if (Objects.nonNull(retorno)) {
             retorno.setBalance(retorno.getBalance().subtract(contaBancariaRequest.getAmount()));

@@ -1,8 +1,8 @@
 package com.example.OperacaoBancaria.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface OperacaoBancariaRepository extends CrudRepository<ContaBancariaModel, Long> {
+public interface OperacaoBancariaRepository extends JpaRepository<ContaBancariaModel, Long> {
 
 }
